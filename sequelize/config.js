@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const host = process.env.DB_HOST;
+const port = process.env.DB_PORT;
 const username = process.env.DB_USER;
 const password = process.env.DB_PW;
 let database = process.env.DB_DATABASE;
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV === "test") {
 
 const conf = {
   host,
+  port,
   username,
   password,
   database,
