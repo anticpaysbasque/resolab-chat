@@ -12,7 +12,10 @@ require("./sequelize/associations"); // If you have associations
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.get("/", (req, res) => res.send("Hello world !"));
+app.use("/chatMessages", require("./routes/chatmessage.routes"));
+
 
 async function main() {
   try {
