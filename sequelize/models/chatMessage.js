@@ -20,7 +20,7 @@ const chatMessage = sequelize.define(
       defaultValue : false
     },
   },
-  {}
+  {freezeTableName: true,}
 );
 
 module.exports = chatMessage;
