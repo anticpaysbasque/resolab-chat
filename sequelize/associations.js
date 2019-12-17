@@ -1,5 +1,8 @@
-const User = require("./models/users");
-const Company = require("./models/companies");
+const chatMessage = require("./models/chatMessage")
+const User = require("./models/user")
 
-Company.hasMany(User, { foreignKey: { allowNull: false } });
-User.belongsTo(Company, { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+
+
+User.hasMany(chatMessage, {as : "sender", foreignKey : "sender_id"});
+User.hasMany(chatMessage, {as : "receiver", foreignKey : "receiver_id"});
+

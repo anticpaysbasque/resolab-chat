@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../index");
 
-const Team = sequelize.define(
-  "Team",
+const chatMessage = sequelize.define(
+  "chatMessage",
   {
     uuid: {
       type: Sequelize.UUID,
@@ -10,20 +10,17 @@ const Team = sequelize.define(
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
     },
-    name: {
-      type: Sequelize.STRING,
+    message: {
+      type: Sequelize.TEXT,
       allowNull: false
     },
-    logo: {
-      type: Sequelize.STRING,
-      allowNull: true
+    isRead: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue : false
     },
-    city: {
-      type: Sequelize.STRING,
-      allowNull: false
-    }
   },
-  {}
+  {freezeTableName: true,}
 );
 
-module.exports = Team;
+module.exports = chatMessage;
