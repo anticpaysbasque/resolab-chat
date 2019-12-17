@@ -5,7 +5,7 @@ const Op = sequelize.Op;
 
 const ChatMessage = require("../sequelize/models/chatMessage")
 
-router.get("/", (req, res) => {
+router.get("", (req, res) => {
     ChatMessage.findAll().then(chatMessages => {
         if (chatMessages.length <= 0){
             res.status(204).send("There is no message in database")
@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
     })
 })
 
-router.post("/", (req, res) => {
+router.post("", (req, res) => {
     const {message, senderId, receiverId} = req.body
 
     if (!message || !senderId || !receiverId) {
@@ -43,9 +43,7 @@ router.post("/", (req, res) => {
 })
 
 
-
-
-router.get("/userMessage/", (req, res) =>{
+router.get("/userMessage", (req, res) =>{
     const {senderId, receiverId} = req.body;
     if (!senderId || !receiverId ){
         res.status(400).json({
@@ -66,12 +64,7 @@ router.get("/userMessage/", (req, res) =>{
         .then(messageList => {
             res.status(200).json(messageList)
         })
-        
-
     }
-
-
-
 })
 
 module.exports = router;
