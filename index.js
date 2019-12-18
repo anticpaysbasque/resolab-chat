@@ -16,6 +16,9 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Hello world !"));
 app.use("/chatMessages", require("./routes/chatmessage.routes"));
 
+if (process.env.NODE_ENV === "test") {
+  app.use("/token", require("./routes/tokenForTests.routes"));
+}
 
 async function main() {
   try {
@@ -35,4 +38,4 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 // If you want to add tests with Mocha & Chai
-// module.exports = app;
+module.exports = app;
