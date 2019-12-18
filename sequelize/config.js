@@ -10,6 +10,8 @@ let dialect = process.env.DB_DIALECT;
 if (process.env.NODE_ENV === "test") {
   database = process.env.DB_DATABASE_TEST;
   port = process.env.DB_PORT_TEST;
+  username = process.env.DB_USER_TEST;
+  password = process.env.DB_PW_TEST;
 }
 
 const conf = {
