@@ -105,6 +105,7 @@ describe("Usermessage", () => {
   });
 
   describe("GET USERMESSAGE", () => {
+    // GET WITH TOKEN //
     it("should return the common messages between two users", async () => {
       const res = await chai
         .request(server)
@@ -112,6 +113,30 @@ describe("Usermessage", () => {
         .set("Authorization", token)
         .send({ senderId: users[1].id, receiverId: users[2].id });
       res.should.have.status(200);
+      res.should.be.json;
+      res.body.should.be.a("array");
+      res.body.length.should.be.eql(4);
+      res.body[0].should.be.a("object");
+      res.body[0].should.have.keys(
+        "uuid",
+        "message",
+        "isRead",
+        "createdAt",
+        "updatedAt",
+        "sender_id",
+        "receiver_id"
+      );
+    });
+
+    // GET WITHOUT TOKEN //
+    it("sould NOT allow to return the common messages between two users", async () => {
+      const res = await chai
+        .request(server)
+        .get("/chatmessages/userMessage")
+        .send({ senderId: users[1].id, receiverId: users[2].id });
+      res.should.have.status(401);
+      res.should.be.json;
+      res.body.should.include({ message: "No token provided" });
     });
   });
 });
