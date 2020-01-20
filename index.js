@@ -3,6 +3,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const PORT = process.env.PORT || 8000;
+const server = require("http").Server(app);
+var io = (module.exports.io = require("socket.io")(server));
+
+// const socketIO = require("socket.io");
 
 // Get the Sequelize config
 const sequelize = require("./sequelize");
@@ -16,6 +20,13 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Hello world !"));
 app.use("/chatMessages", require("./routes/chatmessage.routes"));
 
+// Get the websocket manager
+// const io = socketIO(server);
+// Websocket manager
+const SocketManager = require("./webSockets/SocketManager");
+io.on("connect", SocketManager);
+
+// check if test environment
 if (process.env.NODE_ENV === "test") {
   app.use("/token", require("./routes/tokenForTests.routes"));
 }
@@ -24,7 +35,7 @@ async function main() {
   try {
     await sequelize.sync(); // Sync Method will create Database using the config & models
     console.log("Database connection sucessfull");
-    app.listen(PORT, err => {
+    server.listen(PORT, err => {
       if (err) throw new Error("Something bad happened...");
       console.log(`Listening to port ${PORT}.`);
     });
