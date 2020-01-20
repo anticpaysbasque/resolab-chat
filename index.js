@@ -4,7 +4,9 @@ const app = express();
 const cors = require("cors");
 const PORT = process.env.PORT || 8000;
 const server = require("http").Server(app);
-const socketIO = require("socket.io");
+var io = (module.exports.io = require("socket.io")(server));
+
+// const socketIO = require("socket.io");
 
 // Get the Sequelize config
 const sequelize = require("./sequelize");
@@ -19,52 +21,10 @@ app.get("/", (req, res) => res.send("Hello world !"));
 app.use("/chatMessages", require("./routes/chatmessage.routes"));
 
 // Get the websocket manager
-const io = socketIO(server);
-// Websocket
-let clients = [];
-
-io.sockets.on("connection", socket => {
-  clients.push(socket);
-  console.log("Connected : sockets connected : ", clients.length);
-
-  // Disconnect
-  socket.on("disconnect", socket => {
-    clients.splice(clients.indexOf(socket), 1);
-    console.log("Disconnected : sockets conected : ", clients.length);
-  });
-
-  io.clients((error, clients) => {
-    if (error) throw error;
-    console.log(clients); // => [6em3d4TJP8Et9EMNAAAA, G5p55dHhGgUnLUctAAAB]
-  });
-  socket.emit("message", { message: "connected to chat", user: "server" });
-  socket.on("message", data => {
-    console.log(data);
-    socket.broadcast.emit("message", data);
-    socket.on("disconnect", () => {
-      console.log(`Socket ${socket.id} disconnected.`);
-    });
-  });
-  socket.on("subscribe", function(room) {
-    console.log("joining room", room);
-    socket.join(room);
-  });
-  socket.on("unsubscribe", function(room) {
-    console.log("leaving room", room);
-    socket.leave(room);
-  });
-  socket.on("send", function(data) {
-    console.log("sending room post", data.room);
-    socket.broadcast.to(data.room).emit("message", {
-      message: data.message,
-      user: data.user
-    });
-  });
-});
-
-// ********* List all the clients conected
-
-// ********* private chat
+// const io = socketIO(server);
+// Websocket manager
+const SocketManager = require("./webSockets/SocketManager");
+io.on("connect", SocketManager);
 
 // check if test environment
 if (process.env.NODE_ENV === "test") {
