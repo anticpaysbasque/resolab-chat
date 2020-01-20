@@ -27,13 +27,17 @@ module.exports = function(socket) {
   let sendTypingFromUser;
 
   //Verify Username
-  socket.on(VERIFY_USER, (nickname, callback) => {
+  socket.on(VERIFY_USER, (nickname, userId, callback) => {
     if (isUser(connectedUsers, nickname)) {
       callback({ isUser: true, user: null });
     } else {
       callback({
         isUser: false,
-        user: createUser({ name: nickname, socketId: socket.id })
+        user: createUser({
+          id: userId,
+          name: nickname,
+          socketId: socket.id
+        })
       });
     }
   });
@@ -81,6 +85,8 @@ module.exports = function(socket) {
     sendTypingFromUser(chatId, isTyping);
   });
 
+  //Receives & Sends private message
+
   socket.on(PRIVATE_MESSAGE, ({ reciever, sender, activeChat }) => {
     if (reciever in connectedUsers) {
       const recieverSocket = connectedUsers[reciever].socketId;
@@ -89,8 +95,6 @@ module.exports = function(socket) {
           name: `${reciever}&${sender}`,
           users: [reciever, sender]
         });
-        console.log("receiver :", reciever);
-
         socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
         socket.emit(PRIVATE_MESSAGE, newChat);
       } else {
