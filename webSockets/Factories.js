@@ -54,7 +54,7 @@ function createMessage({
   ChatMessage.create({
     message,
     sender_id: senderId,
-    receiver_id: 5
+    receiver_id: receiverId
   });
 
   return {

@@ -79,8 +79,8 @@ module.exports = function(socket) {
     callback(communityChat);
   });
 
-  socket.on(MESSAGE_SENT, ({ chatId, message }) => {
-    sendMessageToChatFromUser(chatId, message);
+  socket.on(MESSAGE_SENT, ({ chatId, receiver, receiverId, message }) => {
+    sendMessageToChatFromUser(chatId, receiver, receiverId, message);
   });
 
   socket.on(TYPING, ({ chatId, isTyping }) => {
@@ -128,8 +128,8 @@ function sendTypingToChat(user) {
  * @param sender {string} username of sender
  * @return function(chatId, message)
  */
-function sendMessageToChat(sender, senderId, receiver, receiverId) {
-  return (chatId, message) => {
+function sendMessageToChat(sender, senderId) {
+  return (chatId, receiver, receiverId, message) => {
     console.log(chatId, message);
     io.emit(
       `${MESSAGE_RECIEVED}-${chatId}`,
