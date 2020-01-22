@@ -51,6 +51,7 @@ function createMessage({
   receiver = "",
   receiverId = ""
 } = {}) {
+
   const messageId = uuidv4();
 
   ChatMessage.create({
@@ -61,7 +62,7 @@ function createMessage({
   });
 
   return {
-    id: messageId,
+    id: uuidv4(),
     time: getTime(new Date(Date.now())),
     message,
     sender,
