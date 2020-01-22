@@ -2,6 +2,8 @@ let chai = require("chai");
 let chaiHttp = require("chai-http");
 let should = chai.should();
 
+const uuidv4 = require("uuid/v4");
+
 let server = require("../index");
 
 const sequelize = require("../sequelize");
@@ -39,6 +41,7 @@ const user3 = {
 };
 
 const message1 = {
+  uuid: uuidv4(),
   message: "css c'est la vie",
   isRead: true,
   sender_id: 2,
@@ -46,6 +49,7 @@ const message1 = {
 };
 
 const message2 = {
+  uuid: uuidv4(),
   message: "non ça pue",
   isRead: true,
   sender_id: 3,
@@ -53,6 +57,7 @@ const message2 = {
 };
 
 const message3 = {
+  uuid: uuidv4(),
   message: "c'est vrai, le SASS c'est encore mieux",
   isRead: true,
   sender_id: 2,
@@ -60,6 +65,7 @@ const message3 = {
 };
 
 const message4 = {
+  uuid: uuidv4(),
   message: "JS rule them all",
   isRead: true,
   sender_id: 3,
@@ -67,6 +73,7 @@ const message4 = {
 };
 
 const message5 = {
+  uuid: uuidv4(),
   message: "tu peux m'aider pour un flex around ?",
   isRead: true,
   sender_id: 1,

@@ -43,8 +43,8 @@ router.post("", checkAuth, (req, res) => {
   }
 });
 
-router.get("/userMessage", checkAuth, (req, res) => {
-  const { senderId, receiverId } = req.body;
+router.get("/userMessage/:senderId/:receiverId", checkAuth, (req, res) => {
+  const { senderId, receiverId } = req.params;
   if (!senderId || !receiverId) {
     res.status(400).json({
       message: "missing parameters"

@@ -2,6 +2,8 @@ let chai = require("chai");
 let chaiHttp = require("chai-http");
 let should = chai.should();
 
+const uuidv4 = require("uuid/v4");
+
 let server = require("../index");
 
 const sequelize = require("../sequelize");
@@ -39,6 +41,7 @@ const user3 = {
 };
 
 const message1 = {
+  uuid: uuidv4(),
   message: "css c'est la vie",
   isRead: true,
   sender_id: 2,
@@ -46,6 +49,7 @@ const message1 = {
 };
 
 const message2 = {
+  uuid: uuidv4(),
   message: "non ça pue",
   isRead: true,
   sender_id: 3,
@@ -53,6 +57,7 @@ const message2 = {
 };
 
 const message3 = {
+  uuid: uuidv4(),
   message: "c'est vrai, le SASS c'est encore mieux",
   isRead: true,
   sender_id: 2,
@@ -60,6 +65,7 @@ const message3 = {
 };
 
 const message4 = {
+  uuid: uuidv4(),
   message: "JS rule them all",
   isRead: true,
   sender_id: 3,
@@ -67,6 +73,7 @@ const message4 = {
 };
 
 const message5 = {
+  uuid: uuidv4(),
   message: "tu peux m'aider pour un flex around ?",
   isRead: true,
   sender_id: 1,
@@ -109,9 +116,8 @@ describe("Usermessage", () => {
     it("should return the common messages between two users", async () => {
       const res = await chai
         .request(server)
-        .get("/chatmessages/userMessage")
-        .set("Authorization", token)
-        .send({ senderId: users[1].id, receiverId: users[2].id });
+        .get(`/chatmessages/userMessage/${users[1].id}/${users[2].id}`)
+        .set("Authorization", token);
       res.should.have.status(200);
       res.should.be.json;
       res.body.should.be.a("array");
@@ -132,8 +138,7 @@ describe("Usermessage", () => {
     it("sould NOT allow to return the common messages between two users", async () => {
       const res = await chai
         .request(server)
-        .get("/chatmessages/userMessage")
-        .send({ senderId: users[1].id, receiverId: users[2].id });
+        .get(`/chatmessages/userMessage/${users[1].id}/${users[2].id}`);
       res.should.have.status(401);
       res.should.be.json;
       res.body.should.include({ message: "No token provided" });

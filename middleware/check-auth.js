@@ -16,7 +16,6 @@ module.exports.checkAuth = (req, res, next) => {
       if (err) {
         res.status(401).json({ message: "Invalid Token", error: err });
       } else {
-        console.log(decoded);
         next();
       }
     });
