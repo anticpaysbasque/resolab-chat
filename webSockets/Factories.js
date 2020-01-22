@@ -1,5 +1,8 @@
 const uuidv4 = require("uuid/v4");
 
+// import sequelize model to create a new message in database with createMessage method
+const ChatMessage = require("../sequelize/models/chatMessage");
+
 /*
  *	createUser
  *	Creates a user.
@@ -25,12 +28,45 @@ const createUser = ({ id, name = "", socketId = null } = {}) => ({
  *		message {string}
  *		sender {string}
  */
-const createMessage = ({ message = "", sender = "" } = {}) => ({
-  id: uuidv4(),
-  time: getTime(new Date(Date.now())),
-  message,
-  sender
-});
+// const createMessage = ({
+//     message = "",
+//     sender = "",
+//     senderId = "",
+//     receiver = "",
+//     receiverId = ""
+// } = {}) => ({
+//     id: uuidv4(),
+//     time: getTime(new Date(Date.now())),
+//     message,
+//     sender,
+//     senderId,
+//     receiver,
+//     receiverId
+// });
+
+function createMessage({
+  message = "",
+  sender = "",
+  senderId = "",
+  receiver = "",
+  receiverId = ""
+} = {}) {
+  ChatMessage.create({
+    message,
+    sender_id: senderId,
+    receiver_id: receiverId
+  });
+
+  return {
+    id: uuidv4(),
+    time: getTime(new Date(Date.now())),
+    message,
+    sender,
+    senderId,
+    receiver,
+    receiverId
+  };
+}
 
 /*
  *	createChat

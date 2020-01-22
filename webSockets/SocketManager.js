@@ -44,11 +44,13 @@ module.exports = function(socket) {
 
   //User Connects with username
   socket.on(USER_CONNECTED, user => {
+    console.log("user", user);
     user.socketId = socket.id;
     connectedUsers = addUser(connectedUsers, user);
     socket.user = user;
 
-    sendMessageToChatFromUser = sendMessageToChat(user.name);
+    sendMessageToChatFromUser = sendMessageToChat(user.name, user.id);
+    // , receiver, receiverId
     sendTypingFromUser = sendTypingToChat(user.name);
 
     io.emit(USER_CONNECTED, connectedUsers);
@@ -77,8 +79,8 @@ module.exports = function(socket) {
     callback(communityChat);
   });
 
-  socket.on(MESSAGE_SENT, ({ chatId, message }) => {
-    sendMessageToChatFromUser(chatId, message);
+  socket.on(MESSAGE_SENT, ({ chatId, receiver, receiverId, message }) => {
+    sendMessageToChatFromUser(chatId, receiver, receiverId, message);
   });
 
   socket.on(TYPING, ({ chatId, isTyping }) => {
@@ -87,21 +89,26 @@ module.exports = function(socket) {
 
   //Receives & Sends private message
 
-  socket.on(PRIVATE_MESSAGE, ({ reciever, sender, activeChat }) => {
-    if (reciever in connectedUsers) {
-      const recieverSocket = connectedUsers[reciever].socketId;
-      if (activeChat === null || activeChat.id === communityChat.id) {
-        const newChat = createChat({
-          name: `${reciever}&${sender}`,
-          users: [reciever, sender]
-        });
-        socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
-        socket.emit(PRIVATE_MESSAGE, newChat);
-      } else {
-        socket.to(recieverSocket).emit(PRIVATE_MESSAGE, activeChat);
+  socket.on(
+    PRIVATE_MESSAGE,
+    ({ reciever, recieverId, sender, senderId, activeChat }) => {
+      if (reciever in connectedUsers) {
+        const recieverSocket = connectedUsers[reciever].socketId;
+        if (activeChat === null || activeChat.id === communityChat.id) {
+          const newChat = createChat({
+            name: `${reciever}&${sender}`,
+            users: [reciever, sender],
+            usersId: [recieverId, senderId]
+          });
+          console.log(newChat);
+          socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat);
+          socket.emit(PRIVATE_MESSAGE, newChat);
+        } else {
+          socket.to(recieverSocket).emit(PRIVATE_MESSAGE, activeChat);
+        }
       }
     }
-  });
+  );
 };
 /*
  * Returns a function that will take a chat id and a boolean isTyping
@@ -121,11 +128,18 @@ function sendTypingToChat(user) {
  * @param sender {string} username of sender
  * @return function(chatId, message)
  */
-function sendMessageToChat(sender) {
-  return (chatId, message) => {
+function sendMessageToChat(sender, senderId) {
+  return (chatId, receiver, receiverId, message) => {
+    console.log(chatId, message);
     io.emit(
       `${MESSAGE_RECIEVED}-${chatId}`,
-      createMessage({ message, sender })
+      createMessage({
+        message,
+        sender,
+        senderId,
+        receiver,
+        receiverId
+      })
     );
   };
 }
