@@ -1,6 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../index");
 
+const uuidv4 = require("uuid/v4");
+
 const chatMessage = sequelize.define(
   "chatMessage",
   {
@@ -8,7 +10,7 @@ const chatMessage = sequelize.define(
       type: Sequelize.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: Sequelize.UUIDV4
+      defaultValue: uuidv4()
     },
     message: {
       type: Sequelize.TEXT,
@@ -17,10 +19,10 @@ const chatMessage = sequelize.define(
     isRead: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue : false
-    },
+      defaultValue: false
+    }
   },
-  {freezeTableName: true,}
+  { freezeTableName: true }
 );
 
 module.exports = chatMessage;
